@@ -30,8 +30,8 @@ bash: ./some-vendor-tool: cannot execute: required file not found
 It needs `/lib64/ld-linux-x86-64.so.2`, `/usr/lib`, and `/usr/bin/python3`, which every
 other distribution provides. The Omnix base adds them using tools nixpkgs already ships:
 [nix-ld](https://github.com/nix-community/nix-ld) and
-[envfs](https://github.com/Mic92/envfs). It never relocates the Nix store, so every
-package still comes from the official binary cache.
+[envfs](https://github.com/Mic92/envfs). It never relocates the Nix store, so it can use the same
+prebuilt packages as NixOS from the official binary cache and compile when necessary.
 
 ## Flavors
 
