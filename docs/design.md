@@ -27,7 +27,8 @@ These are hard rules. A change that breaks one is rejected, however useful it is
 ```
   machine       your flake: user, hardware, disk, local tweaks     (owned by the user)
      │ imports
-  flavor        Atrium | Autarchy | Minimal                          (one repo each)
+  flavor        KDE Plasma - Atrium | Hyprland - Omarchy | Minimal
+                (one repository per desktop)
      │ imports
   base          Omnix: nix-ld + /usr/lib + envfs                     (Omnix-Linux/Omnix)
      │ on
@@ -166,7 +167,7 @@ A flavor is a flake that exports one or more `nixosModules`. Every listed flavor
 ### 6.2 Variants
 
 A flavor repository can export several modules. The registry names the one to use.
-Autarchy exports:
+Hyprland - Omarchy exports:
 
 - `stable`: a pinned Omarchy release;
 - `latest`: follows Omarchy's main branch.

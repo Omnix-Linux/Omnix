@@ -59,13 +59,16 @@ if ! curl -fsS --max-time 10 -o $REGISTRY https://raw.githubusercontent.com/Omni
   || ! jq -e 'type == "array"' $REGISTRY >/dev/null; then
   cp $ETC/flavors.json $REGISTRY
 fi
-mapfile -t flavors < <(jq -r '.[] | select(.status == "ready") | "\(.id)\t\(.name) — \(.description)"' $REGISTRY)
+mapfile -t flavors < <(jq -r '.[] | select(.status == "ready") | "\(.name) — \(.description)"' $REGISTRY)
 [ ${#flavors[@]} -gt 0 ] || die "the flavor registry has no ready flavors"
 if [ -z "${OMNIX_FLAVOR:-}" ]; then
-  OMNIX_FLAVOR=$(printf '%s\n' "${flavors[@]}" | gum choose --header "What kind of system do you want?" | cut -f1)
+  selected_flavor=$(printf '%s\n' "${flavors[@]}" | gum choose --header "What kind of system do you want?")
+  OMNIX_FLAVOR=$(jq -r --arg choice "$selected_flavor" \
+    '.[] | select(.status == "ready" and "\(.name) — \(.description)" == $choice) | .id' $REGISTRY)
 fi
 flavor_json=$(jq -c --arg id "$OMNIX_FLAVOR" '.[] | select(.id == $id and .status == "ready")' $REGISTRY)
 [ -n "$flavor_json" ] || die "unknown or unready flavor $OMNIX_FLAVOR"
+flavor_name=$(jq -r '.name' <<<"$flavor_json")
 flavor_flake=$(jq -r '.flake // empty' <<<"$flavor_json")
 flavor_module=$(jq -r '.module // empty' <<<"$flavor_json")
 
@@ -80,7 +83,7 @@ ask OMNIX_HOSTNAME "Hostname" omnix
 ask OMNIX_TIMEZONE "Timezone" "$(timedatectl show -p Timezone --value 2>/dev/null || echo UTC)"
 
 if [ -z "${OMNIX_YES:-}" ]; then
-  gum confirm "Erase $OMNIX_DISK and install Omnix ($OMNIX_FLAVOR, $OMNIX_FS$([ "$OMNIX_LUKS" = 1 ] && echo ", encrypted"))?" || die "cancelled"
+  gum confirm "Erase $OMNIX_DISK and install Omnix ($flavor_name, $OMNIX_FS$([ "$OMNIX_LUKS" = 1 ] && echo ", encrypted"))?" || die "cancelled"
 fi
 
 # Partition, format and mount with disko.

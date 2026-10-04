@@ -13,9 +13,9 @@ Omnix has two parts:
 ```
 Omnix installer
   ▸ What kind of system do you want?
-      Atrium            polished windows, mouse-first KDE desktop
-      Autarchy          Omarchy-style keyboard-driven Hyprland (stable or latest)
-      Minimal           just the base
+      KDE Plasma - Atrium      polished windows, mouse-first KDE desktop
+      Hyprland - Omarchy       Omarchy-style keyboard-driven Hyprland (stable or latest)
+      Minimal                  just the base
 ```
 
 ## The FHS problem
@@ -35,13 +35,15 @@ prebuilt packages as NixOS from the official binary cache and compile when neces
 
 ## Flavors
 
+Desktop labels follow the [naming policy](docs/naming.md).
+
 A flavor is a flake that turns the base into a complete system. Each one lives in its
 own repository:
 
 | Flavor | What it is |
 |---|---|
-| [Atrium](https://github.com/Omnix-Linux/Atrium) | KDE Plasma desktop, polished windows, mouse-first |
-| [Autarchy](https://github.com/Omnix-Linux/Autarchy) | A port of Omarchy, in *stable* (a pinned Omarchy release) and *latest* variants |
+| [KDE Plasma - Atrium](https://github.com/Omnix-Linux/Atrium) | KDE Plasma desktop, polished windows, mouse-first |
+| [Hyprland - Omarchy](https://github.com/Omnix-Linux/Autarchy) | A port of Omarchy, in *stable* (a pinned Omarchy release) and *latest* variants |
 | Minimal | The base alone |
 
 The installed system is a flake that **you** own. The flavor is just one input. You
