@@ -1,7 +1,7 @@
 [
   {
     "id": "atrium",
-    "name": "Atrium",
+    "name": "KDE Plasma - Atrium",
     "description": "KDE Plasma desktop: polished windows, mouse-first",
     "flake": "github:Omnix-Linux/Atrium",
     "module": "default",
@@ -9,7 +9,7 @@
   },
   {
     "id": "autarchy-stable",
-    "name": "Autarchy (stable)",
+    "name": "Hyprland - Omarchy (stable)",
     "description": "Omarchy-style keyboard-driven Hyprland, pinned to an Omarchy release",
     "flake": "github:Omnix-Linux/Autarchy",
     "module": "stable",
@@ -17,7 +17,7 @@
   },
   {
     "id": "autarchy-latest",
-    "name": "Autarchy (latest)",
+    "name": "Hyprland - Omarchy (latest)",
     "description": "Omarchy-style keyboard-driven Hyprland, tracking Omarchy main",
     "flake": "github:Omnix-Linux/Autarchy",
     "module": "latest",
