@@ -1,0 +1,53 @@
+name: Bug report
+description: Something in Omnix, a desktop, the installer or local AI does not work
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting. One bug per issue, please. Search [open issues](https://github.com/Omnix-Linux/Omnix/issues) first; a 👍 on an existing one helps too.
+  - type: dropdown
+    id: area
+    attributes:
+      label: Where is the problem?
+      options:
+        - Installer (ISO, omnix-install)
+        - Base system (Linux compatibility, a program will not run)
+        - Hyprland - Omarchy desktop
+        - KDE Plasma - Atrium desktop
+        - Local AI (Ollama, LM Studio, llama.cpp, GPU)
+        - Updates and rollback
+        - Try Omnix Docker app
+        - Website
+        - Not sure
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What you saw, and what you expected instead. Paste error messages as text.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Boot the installer and choose ...
+        2. Run ...
+        3. See error
+  - type: textarea
+    id: system
+    attributes:
+      label: System information
+      description: |
+        Run this in a terminal and paste the output. From the installer, skip the last line.
+        `nixos-version; uname -rm; lspci -nn | grep -Ei 'vga|3d|display'; nix flake metadata /etc/nixos`
+      render: text
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: For a failing service, `journalctl -b -u <service> | tail -n 100`. For a failed rebuild, the last lines of its output.
+      render: text
