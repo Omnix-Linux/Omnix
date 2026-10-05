@@ -1,3 +1,5 @@
+<img src=".github/assets/icon.png" alt="" width="96">
+
 # Omnix
 
 **NixOS with the standard Linux layout, and a choice of systems at install time.**
@@ -42,8 +44,8 @@ own repository:
 
 | Flavor | What it is |
 |---|---|
-| [KDE Plasma - Atrium](https://github.com/Omnix-Linux/Atrium) | KDE Plasma desktop, polished windows, mouse-first |
-| [Hyprland - Omarchy](https://github.com/Omnix-Linux/Autarchy) | A port of Omarchy, in *stable* (a pinned Omarchy release) and *latest* variants |
+| <img src="https://raw.githubusercontent.com/Omnix-Linux/Atrium/main/.github/assets/icon.png" alt="" width="20"> [KDE Plasma - Atrium](https://github.com/Omnix-Linux/Atrium) | KDE Plasma desktop, polished windows, mouse-first |
+| <img src="https://raw.githubusercontent.com/Omnix-Linux/Autarchy/main/.github/assets/icon.png" alt="" width="20"> [Hyprland - Omarchy](https://github.com/Omnix-Linux/Autarchy) | A port of Omarchy, in *stable* (a pinned Omarchy release) and *latest* variants |
 | Minimal | The base alone |
 
 The installed system is a flake that **you** own. The flavor is just one input. You
