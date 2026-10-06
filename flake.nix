@@ -7,14 +7,23 @@
     let
       system = "x86_64-linux";
       pkgs = nixpkgs.legacyPackages.${system};
+      appTests = import ./tests/apps-gui.nix {
+        inherit pkgs;
+        module = self.nixosModules.default;
+      };
     in
     {
       nixosModules.default = import ./modules/fhs.nix;
       nixosModules.fhs = self.nixosModules.default;
 
-      checks.${system}.fhs = import ./tests/fhs.nix {
-        inherit pkgs;
-        module = self.nixosModules.default;
+      checks.${system} = {
+        fhs = import ./tests/fhs.nix {
+          inherit pkgs;
+          module = self.nixosModules.default;
+        };
+        # GUI apps in an X11 session: tests/apps-gui.nix.
+        app-filmcraft = appTests.filmcraft;
+        app-obs = appTests.obs;
       };
 
       nixosConfigurations.installer = nixpkgs.lib.nixosSystem {
