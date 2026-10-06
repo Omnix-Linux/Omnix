@@ -1,4 +1,4 @@
-# OBS Studio built from Omnix's fork: Omnix-Linux/obs-studio `master` is upstream
+# OBS Studio built from Omnix's fork: omnix-apps/obs-studio `master` is upstream
 # master plus Omnix's own fixes (each proposed upstream), synced from time to time.
 # nixpkgs' obs-studio recipe builds it; only the source and version change.
 #
@@ -11,7 +11,7 @@
 #            loader prefixed "<exe>/../" to OBS_PLUGIN_PATH, which Nix builds
 #            as an absolute path, so no core modules loaded at all.
 #
-# To sync: `gh repo sync Omnix-Linux/obs-studio --source obsproject/obs-studio`
+# To sync: `gh repo sync omnix-apps/obs-studio --source obsproject/obs-studio`
 # can't fast-forward past our commits, so rebase them onto upstream master and
 # push; then set `rev` to the new master head and update `hash` and `version`.
 { lib, obs-studio, fetchFromGitHub }:
@@ -24,7 +24,7 @@ in
 obs-studio.overrideAttrs (old: {
   inherit version;
   src = fetchFromGitHub {
-    owner = "Omnix-Linux";
+    owner = "omnix-apps";
     repo = "obs-studio";
     inherit rev;
     fetchSubmodules = true;

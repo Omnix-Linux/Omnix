@@ -7,7 +7,7 @@
     let
       system = "x86_64-linux";
       pkgs = nixpkgs.legacyPackages.${system};
-      # OBS with Omnix's fixes from the Omnix-Linux/obs-studio fork: pkgs/obs-studio.nix.
+      # OBS with Omnix's fixes from the omnix-apps/obs-studio fork: pkgs/obs-studio.nix.
       obs-studio = pkgs.callPackage ./pkgs/obs-studio.nix { };
       appTests = import ./tests/apps-gui.nix {
         inherit pkgs obs-studio;
