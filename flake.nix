@@ -34,6 +34,11 @@
         app-kitty = desktopTests.kitty;
         app-signal = desktopTests.signal;
         app-slack = desktopTests.slack;
+        # OpenCut's web app served in the VM, opened in Brave: tests/apps-opencut.nix.
+        app-opencut = import ./tests/apps-opencut.nix {
+          inherit pkgs;
+          module = self.nixosModules.default;
+        };
       };
 
       nixosConfigurations.installer = nixpkgs.lib.nixosSystem {
