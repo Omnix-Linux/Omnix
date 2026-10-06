@@ -11,6 +11,7 @@
         inherit pkgs;
         module = self.nixosModules.default;
       };
+      artcraftTests = import ./tests/apps-artcraft.nix { inherit pkgs; inherit (appTests) guiTest; };
     in
     {
       nixosModules.default = import ./modules/fhs.nix;
@@ -24,6 +25,13 @@
         # GUI apps in an X11 session: tests/apps-gui.nix.
         app-filmcraft = appTests.filmcraft;
         app-obs = appTests.obs;
+        # More ArtCraft upstream binaries: tests/apps-artcraft.nix.
+        app-photocraft = artcraftTests.photocraft;
+        app-vectorcraft = artcraftTests.vectorcraft;
+        app-lightcraft = artcraftTests.lightcraft;
+        app-printcraft = artcraftTests.printcraft;
+        app-effectcraft = artcraftTests.effectcraft;
+        app-designcraft = artcraftTests.designcraft;
       };
 
       nixosConfigurations.installer = nixpkgs.lib.nixosSystem {
