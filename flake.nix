@@ -7,8 +7,10 @@
     let
       system = "x86_64-linux";
       pkgs = nixpkgs.legacyPackages.${system};
+      # OBS with Omnix's fixes from the Omnix-Linux/obs-studio fork: pkgs/obs-studio.nix.
+      obs-studio = pkgs.callPackage ./pkgs/obs-studio.nix { };
       appTests = import ./tests/apps-gui.nix {
-        inherit pkgs;
+        inherit pkgs obs-studio;
         module = self.nixosModules.default;
       };
       desktopTests = import ./tests/apps-desktop.nix {
@@ -57,6 +59,13 @@
         # (envfs on the live ISO also breaks NetworkManager's DNS: Omnix#1.)
         modules = [ ./installer/iso.nix ];
       };
-      packages.${system}.iso = self.nixosConfigurations.installer.config.system.build.isoImage;
+      packages.${system} = {
+        iso = self.nixosConfigurations.installer.config.system.build.isoImage;
+        inherit obs-studio;
+      };
+      # Use Omnix's patched apps on any system: nixpkgs.overlays = [ omnix.overlays.default ];
+      overlays.default = final: prev: {
+        obs-studio = final.callPackage ./pkgs/obs-studio.nix { inherit (prev) obs-studio; };
+      };
     };
 }
