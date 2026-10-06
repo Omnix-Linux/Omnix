@@ -48,11 +48,10 @@ pkgs.testers.runNixOSTest {
     with subtest("envfs resolves shebangs and /bin paths on PATH"):
         machine.succeed("/bin/true")
         machine.succeed("printf '#!/usr/bin/python3\\nprint(1)\\n' > /tmp/s.py && chmod +x /tmp/s.py")
-        # Known upstream gap: envfs resolves names on exec but not on readlink,
-        # and a relocatable interpreter (this python-build-standalone) finds its
-        # stdlib by readlinking the path it was started as. Fixed by
-        # Mic92/envfs#233; flip this to succeed once nixpkgs ships it.
-        machine.fail("PATH=/opt/python/bin:$PATH /tmp/s.py")
+        # A relocatable interpreter (this python-build-standalone) finds its stdlib
+        # by readlinking the path it was started as. Stock envfs doesn't resolve
+        # names on readlink; Omnix's envfs carries the fix (Mic92/envfs#233).
+        machine.succeed("PATH=/opt/python/bin:$PATH /tmp/s.py | grep -qx 1")
         # An interpreter with a compiled-in prefix works today.
         machine.succeed("printf '#!/usr/bin/bash\\necho ok\\n' > /tmp/s.sh && chmod +x /tmp/s.sh && /tmp/s.sh")
 

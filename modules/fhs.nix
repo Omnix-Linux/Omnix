@@ -7,10 +7,26 @@
 #   /bin, /usr/bin               envfs: any name on the caller's PATH
 #
 # Everything comes from nixpkgs as-is (rule 4); the only local builds are
-# symlink trees and text files (rule 1).
+# symlink trees and text files (rule 1). One deliberate exception: envfs carries
+# Omnix's fix for resolving names on readlink (envfs-readlink below) until
+# nixpkgs ships it, so envfs itself is built locally.
 { config, lib, pkgs, ... }:
 let
   cfg = config.omnix.fhs;
+
+  # envfs resolves /usr/bin/NAME on exec but not on readlink, so a relocatable
+  # interpreter (python-build-standalone) started through #!/usr/bin/python3 can't
+  # find its stdlib. Omnix's fix, proposed upstream as Mic92/envfs#233, applied
+  # here until a nixpkgs release includes it. Drop this when it does.
+  envfs-readlink = pkgs.envfs.overrideAttrs (old: {
+    patches = (old.patches or [ ]) ++ [
+      (pkgs.fetchpatch {
+        name = "envfs-resolve-on-readlink.patch";
+        url = "https://github.com/zackees/envfs/commit/9424a75731905637631f4fa70d0ac3105b088d04.patch";
+        hash = "sha256-lymqTRQ4zoxvAe6rcvRICzQYSkhHigvs2UE75xTL6JE=";
+      })
+    ];
+  });
 
   # Sonames nixpkgs no longer ships under the name foreign binaries ask for.
   legacySonameShims = pkgs.runCommand "omnix-legacy-soname-shims" { } ''
@@ -66,6 +82,7 @@ in
       baseLibraries ++ lib.optionals cfg.presets.desktop desktopLibraries ++ cfg.libraries;
 
     services.envfs.enable = true;
+    services.envfs.package = envfs-readlink;
 
     systemd.tmpfiles.rules = [
       "L+ /usr/lib - - - - ${libraryTree}"
