@@ -96,7 +96,7 @@ in
       "d /usr/share 0755 root root - -"
       "d /usr/share/X11 0755 root root - -"
       "L+ /usr/share/X11/xkb - - - - ${pkgs.xkeyboard_config}/share/X11/xkb"
-      "L+ /usr/share/X11/locale - - - - ${pkgs.xorg.libX11}/share/X11/locale"
+      "L+ /usr/share/X11/locale - - - - ${pkgs.libx11}/share/X11/locale"
     ];
 
     # Python's ctypes.util.find_library asks `/sbin/ldconfig -p`. The cache only
