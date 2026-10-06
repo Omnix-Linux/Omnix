@@ -11,6 +11,10 @@
         inherit pkgs;
         module = self.nixosModules.default;
       };
+      desktopTests = import ./tests/apps-desktop.nix {
+        inherit pkgs;
+        module = self.nixosModules.default;
+      };
     in
     {
       nixosModules.default = import ./modules/fhs.nix;
@@ -24,6 +28,12 @@
         # GUI apps in an X11 session: tests/apps-gui.nix.
         app-filmcraft = appTests.filmcraft;
         app-obs = appTests.obs;
+        # Desktop apps: tests/apps-desktop.nix.
+        app-brave = desktopTests.brave;
+        app-telegram = desktopTests.telegram;
+        app-kitty = desktopTests.kitty;
+        app-signal = desktopTests.signal;
+        app-slack = desktopTests.slack;
       };
 
       nixosConfigurations.installer = nixpkgs.lib.nixosSystem {
