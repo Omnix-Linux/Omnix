@@ -84,21 +84,17 @@ in
     with subtest("--version runs"):
         print(machine.succeed("/opt/kitty/bin/kitty --version"))
 
-    # Known gap: kitty's bundled libxkbcommon looks for keymaps in
-    # /usr/share/X11/xkb, which the Omnix FHS layer does not provide. The
-    # unmodified launch must fail with exactly that error until it does.
-    with subtest("known gap: unmodified launch has no /usr/share/X11/xkb"):
-        machine.fail("test -e /usr/share/X11/xkb")
-        out = machine.fail("DISPLAY=:0 HOME=/root timeout 30 /opt/kitty/bin/kitty true 2>&1")
-        print(out)
-        assert "failed to add default include path /usr/share/X11/xkb" in out
-        assert "GLFW initialization failed" in out
+    # kitty's bundled libxkbcommon looks for keymaps in /usr/share/X11/xkb and
+    # compose tables in /usr/share/X11/locale; the desktop preset provides both.
+    with subtest("standard X11 data paths exist"):
+        machine.succeed("test -e /usr/share/X11/xkb/rules/evdev")
+        machine.succeed("test -d /usr/share/X11/locale/en_US.UTF-8")
   '' + launch {
     unit = "kitty";
     cls = "kitty";
-    # The one thing missing above, pointed at explicitly. PATH as a login
-    # session has it (systemd-run's default PATH has no NixOS bin dirs).
-    env = "-E XKB_CONFIG_ROOT=${pkgs.xkeyboard_config}/share/X11/xkb -E PATH=/run/current-system/sw/bin";
+    # Unmodified: no XKB_CONFIG_ROOT. The login-session search path is passed
+    # because systemd-run's default one has no NixOS bin dirs.
+    env = "-E PATH=/run/current-system/sw/bin";
     cmd = "/opt/kitty/bin/kitty sh -c 'echo OMNIX-KITTY-OK > /tmp/kitty-ran; uname -a; echo OMNIX-KITTY-OK; exec sh'";
   } + ''
     machine.succeed("grep -q OMNIX-KITTY-OK /tmp/kitty-ran")
