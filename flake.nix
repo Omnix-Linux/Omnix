@@ -7,14 +7,38 @@
     let
       system = "x86_64-linux";
       pkgs = nixpkgs.legacyPackages.${system};
+      appTests = import ./tests/apps-gui.nix {
+        inherit pkgs;
+        module = self.nixosModules.default;
+      };
+      desktopTests = import ./tests/apps-desktop.nix {
+        inherit pkgs;
+        module = self.nixosModules.default;
+      };
     in
     {
       nixosModules.default = import ./modules/fhs.nix;
       nixosModules.fhs = self.nixosModules.default;
 
-      checks.${system}.fhs = import ./tests/fhs.nix {
-        inherit pkgs;
-        module = self.nixosModules.default;
+      checks.${system} = {
+        fhs = import ./tests/fhs.nix {
+          inherit pkgs;
+          module = self.nixosModules.default;
+        };
+        # GUI apps in an X11 session: tests/apps-gui.nix.
+        app-filmcraft = appTests.filmcraft;
+        app-obs = appTests.obs;
+        # Desktop apps: tests/apps-desktop.nix.
+        app-brave = desktopTests.brave;
+        app-telegram = desktopTests.telegram;
+        app-kitty = desktopTests.kitty;
+        app-signal = desktopTests.signal;
+        app-slack = desktopTests.slack;
+        # OpenCut's web app served in the VM, opened in Brave: tests/apps-opencut.nix.
+        app-opencut = import ./tests/apps-opencut.nix {
+          inherit pkgs;
+          module = self.nixosModules.default;
+        };
       };
 
       nixosConfigurations.installer = nixpkgs.lib.nixosSystem {
