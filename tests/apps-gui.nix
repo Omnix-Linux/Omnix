@@ -73,6 +73,15 @@ in
         print(machine.succeed("DISPLAY=:0 xdotool search --onlyvisible --name 'OBS' getwindowname %@"))
         machine.screenshot("obs")
 
+    # A wrong plugin path still opens the window, just with no capture sources or
+    # encoders, so require OBS's output to list its core modules as loaded.
+    with subtest("core modules load"):
+        obs_log = machine.succeed("journalctl -u obs --no-pager -o cat")
+        assert "Failed to load core module" not in obs_log, "a core module failed to load"
+        print("\n".join(l for l in obs_log.splitlines() if "Loaded Modules" in l or l.strip().startswith(("obs-ffmpeg", "linux-capture", "linux-pipewire", "obs-x264"))))
+        for module in ("obs-ffmpeg", "linux-capture", "obs-x264"):
+            assert module in obs_log, f"{module} did not load"
+
     # Omnix's patch guards the graphics teardown that runs after obs_shutdown()
     # (obsproject/obs-studio#13906). Close OBS the normal way and require a clean
     # exit: the unit must finish with Result=success and leave no core dump.
