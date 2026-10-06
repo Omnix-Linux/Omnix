@@ -29,6 +29,9 @@ let
   };
 in
 {
+  # Shared with tests/apps-artcraft.nix.
+  inherit guiTest;
+
   # The unmodified upstream binary, running through nix-ld and the FHS tree.
   filmcraft = guiTest "filmcraft" { } ''
     machine.succeed("mkdir -p /opt/filmcraft")
