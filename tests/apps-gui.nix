@@ -1,7 +1,7 @@
 # Boots an X11 session on the Omnix base with the desktop library preset and
 # launches real GUI apps to their main window, taking a screenshot of each.
 # IceWM with root autologin (nixpkgs' test x11 profile) keeps the session small.
-{ pkgs, module }:
+{ pkgs, module, obs-studio ? pkgs.obs-studio }:
 let
   # The VM has no network: the upstream release arrives as a fixed-output
   # fetch. The hash matches the release's SHA256SUMS.txt
@@ -55,7 +55,8 @@ in
   '';
 
   # OBS publishes only Ubuntu .debs, so this is the nixpkgs build.
-  obs = guiTest "obs" { environment.systemPackages = [ pkgs.obs-studio ]; } ''
+  # Omnix's OBS: nixpkgs' build plus the fixes in pkgs/obs-studio.nix.
+  obs = guiTest "obs" { environment.systemPackages = [ obs-studio pkgs.wmctrl ]; } ''
     with subtest("--version runs"):
         machine.succeed("obs --version")
 
@@ -71,5 +72,18 @@ in
         machine.succeed("systemctl is-active obs")
         print(machine.succeed("DISPLAY=:0 xdotool search --onlyvisible --name 'OBS' getwindowname %@"))
         machine.screenshot("obs")
+
+    # Omnix's patch guards the graphics teardown that runs after obs_shutdown()
+    # (obsproject/obs-studio#13906). Close OBS the normal way and require a clean
+    # exit: the unit must finish with Result=success and leave no core dump.
+    with subtest("quits cleanly"):
+        machine.succeed("DISPLAY=:0 xdotool key Escape")  # dismiss the first-run wizard
+        machine.succeed("sleep 2")
+        machine.succeed("DISPLAY=:0 wmctrl -c 'OBS 3'")
+        machine.wait_until_fails("systemctl is-active obs", timeout=60)
+        result = machine.succeed("systemctl show obs -p Result --value").strip()
+        print("obs unit result:", result)
+        assert result == "success", result
+        machine.fail("coredumpctl --no-pager list obs")
   '';
 }
