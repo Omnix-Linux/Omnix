@@ -5,6 +5,7 @@
 #   /sbin/ldconfig               glibc's ldconfig on /etc/ld.so.cache
 #   /etc/ld.so.cache             rebuilt from /usr/lib on boot and every switch
 #   /bin, /usr/bin               envfs: any name on the caller's PATH
+#   /usr/share/X11/{xkb,locale}  keymaps and compose tables (desktop preset)
 #
 # Everything comes from nixpkgs as-is (rule 4); the only local builds are
 # symlink trees and text files (rule 1). One deliberate exception: envfs carries
@@ -89,6 +90,13 @@ in
       "L+ /lib - - - - /usr/lib"
       "d /sbin 0755 root root - -"
       "L+ /sbin/ldconfig - - - - ${ldconfig}"
+    ] ++ lib.optionals cfg.presets.desktop [
+      # Prebuilt GUI apps that bundle libxkbcommon or libX11 (kitty, GLFW and SDL
+      # apps) look for keymaps and compose tables at the standard X11 paths.
+      "d /usr/share 0755 root root - -"
+      "d /usr/share/X11 0755 root root - -"
+      "L+ /usr/share/X11/xkb - - - - ${pkgs.xkeyboard_config}/share/X11/xkb"
+      "L+ /usr/share/X11/locale - - - - ${pkgs.xorg.libX11}/share/X11/locale"
     ];
 
     # Python's ctypes.util.find_library asks `/sbin/ldconfig -p`. The cache only
