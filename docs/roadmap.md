@@ -23,8 +23,10 @@ is `tests/fhs.nix` (`nix flake check`), which covers real envfs, activation, and
 systemd service without nix-ld variables. Found upstream:
 
 - envfs did not resolve names on `readlink`, so relocatable interpreters
-  (python-build-standalone) cannot run through `#!/usr/bin/python3`
-  ([Mic92/envfs#233](https://github.com/Mic92/envfs/pull/233)).
+  (python-build-standalone) could not run through `#!/usr/bin/python3`.
+  Fixed in Omnix: the base builds envfs with the fix proposed upstream as
+  [Mic92/envfs#233](https://github.com/Mic92/envfs/pull/233), until nixpkgs
+  ships it; `tests/fhs.nix` now expects the script to run.
 - envfs on the live ISO breaks NetworkManager DNS
   ([#1](https://github.com/Omnix-Linux/Omnix/issues/1)); the ISO no longer includes
   the FHS layer.
