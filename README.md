@@ -81,3 +81,35 @@ See [design](docs/design.md), [prior art](docs/prior-art.md),
 Omnix is independent and not affiliated with or endorsed by the NixOS Foundation. It
 depends entirely on nixpkgs, NixOS, and the public `cache.nixos.org`. Small fixes that
 belong upstream go upstream.
+
+## Catalog compatibility checks
+
+The Apps catalog has separate terminal, browser and communication checks:
+
+```sh
+nix build .#checks.x86_64-linux.apps-terminals
+nix build .#checks.x86_64-linux.apps-browsers
+nix build .#checks.x86_64-linux.apps-communication
+```
+
+Each check boots an Omnix VM with the desktop library preset and an X11 session,
+then launches clients as an ordinary user. Screenshots are saved in the check
+output. These checks complement the existing vendor-binary checks; they do not
+replace Kitty, Brave, Telegram, Signal or Slack coverage.
+
+- **Terminals:** WezTerm, Alacritty, Ghostty and xterm exercise a shell, PTY,
+  terminfo and typed input. tmux exercises a two-pane session, input, attachment
+  and persistence after detachment.
+- **Browsers:** Chrome, Chromium, Firefox and the hash-pinned upstream Helium
+  release load a local HTML page and execute JavaScript with fresh profiles.
+  Chromium-based clients retain their sandbox.
+- **Communication:** Discord, Element and Thunderbird exercise desktop startup
+  without external accounts. Element uses an isolated unlocked GNOME keyring
+  and `--password-store=gnome-libsecret`, preserving encrypted credential storage.
+  Discord may only reach its network-dependent updater in the VM; a visible
+  bootstrap window is not evidence of sign-in readiness. Messaging, calls and
+  mail delivery are outside this check's scope.
+
+Native applications come from the locked nixpkgs revision. Chrome and Discord
+are explicitly allowed unfree packages in these test VMs. These checks do not
+claim Wayland, hardware acceleration or complete application compatibility.
