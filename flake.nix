@@ -17,6 +17,7 @@
         inherit pkgs;
         module = self.nixosModules.default;
       };
+      catalogTests = import ./tests/apps-catalog.nix { inherit pkgs; module = self.nixosModules.default; };
       artcraftTests = import ./tests/apps-artcraft.nix { inherit pkgs; inherit (appTests) guiTest; };
     in
     {
@@ -32,6 +33,9 @@
         app-filmcraft = appTests.filmcraft;
         app-obs = appTests.obs;
         # Desktop apps: tests/apps-desktop.nix.
+        apps-terminals = catalogTests.terminals;
+        apps-browsers = catalogTests.browsers;
+        apps-communication = catalogTests.communication;
         app-brave = desktopTests.brave;
         app-telegram = desktopTests.telegram;
         app-kitty = desktopTests.kitty;
